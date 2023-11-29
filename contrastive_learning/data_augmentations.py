@@ -6,7 +6,7 @@ import config
 def crop_and_resize(image):
     return transforms.Compose([
         transforms.RandomResizedCrop(config.ORIGINAL_SIZE, scale=(0.3, 0.4),\
-                                     ratio=(0.8, 1.2)),
+                                     ratio=(0.8, 1.2), antialias=True),
         transforms.RandomHorizontalFlip()
         ])(image)
 
@@ -16,3 +16,6 @@ def color_distortion(image):
 
 def gaussian_blur(image):
     return transforms.GaussianBlur(3)(image)
+
+def augment_image(image):
+    return gaussian_blur(color_distortion(crop_and_resize(image)))
