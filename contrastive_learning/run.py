@@ -23,3 +23,5 @@ temperature = 0.5
 
 if __name__ == "__main__":
     train.train(simclr_model, trainloader_cifar10, temperature, optimizer)
+
+    torch.save(simclr_model.state_dict(), "Siamese_Net_weights.pt")

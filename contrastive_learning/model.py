@@ -40,16 +40,21 @@ class Siamese_Network(nn.Module):
 class VanillaCNN(nn.Module):
     def __init__(self):
         super().__init__()
-        self.conv1 = nn.Conv2d(3, 32, 3)
-        self.bn1 = nn.BatchNorm2d(32)
-        self.conv2 = nn.Conv2d(32, 64, 3)
-        self.bn2 = nn.BatchNorm2d(64)
-        self.conv3 = nn.Conv2d(64, 64, 3)
-        self.bn3 = nn.BatchNorm2d(64)
+        self.deep_conv = nn.Sequential(
+            nn.Conv2d(3, 32, 3),
+            nn.ReLU(),
+            nn.BatchNorm2d(32),
+            nn.Conv2d(32, 64, 3),
+            nn.ReLU(),
+            nn.BatchNorm2d(64),
+            nn.Conv2d(64, 64, 3),
+            nn.ReLU(),
+            nn.BatchNorm2d(64)
+        )
         self.proj_head = Projection_Head(self.head_resnet_in_features)
 
     def one_forward(self, input):
-        output = self.encoder(input.unsqueeze(0))
+        output = self.deep_conv(input.unsqueeze(0))
         output = output.view(output.size(0), -1)
         if not self.training:
             return output

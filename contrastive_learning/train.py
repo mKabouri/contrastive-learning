@@ -25,11 +25,10 @@ def train(model, train_data, temperature, optimizer, device=config.device, epoch
     model.training = True
     print(f"Training start with {config.device}")
     for epoch in range(epochs):
-        loss = 0
-        rep_list = []
+        total_loss = 0
         for k, batch in enumerate(train_data):
-            batch_loss = 0
             batch = batch.to(device)
+            rep_list = []
             for image in batch:
                 # Our two augmentations
                 augmentation1 = augmentations.augment_image
@@ -41,17 +40,18 @@ def train(model, train_data, temperature, optimizer, device=config.device, epoch
                 output1, output2 = model(image_augm1, image_augm2)
                 rep_list.append(output1)
                 rep_list.append(output2)
-
+            
+            batch_loss = 0
             for i in range(0, 2*config.BATCH_SIZE, 2):
                 batch_loss += contrastive_loss(rep_list[i], rep_list[i+1], rep_list, temperature) +\
                     contrastive_loss(rep_list[i+1], rep_list[i], rep_list, temperature)
-
-            optimizer.zero_grad()
             
-            batch_loss.backward(retain_graph=True)
+            optimizer.zero_grad()
+
+            batch_loss.backward()
 
             optimizer.step()
 
-            loss += batch_loss.item()
+            total_loss += batch_loss.item()
 
-        print(f"Epoch: {epoch}, loss: {loss/(2*config.BATCH_SIZE*500)}")
+        print(f"Epoch: {epoch}, loss: {total_loss/(2*config.BATCH_SIZE*500)}")
