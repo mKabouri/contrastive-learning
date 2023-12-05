@@ -25,7 +25,16 @@ class UnlabeledDataset(torch.utils.data.Dataset):
         return len(self.dataset)
 
     def __getitem__(self, index):
-        image = self.dataset[index][0]
-        if self.transform:
-            image = self.transform(image)
-        return image
+        if isinstance(index, int): # This is our previous dataset
+            image = self.dataset[index][0]
+            if self.transform:
+                image = self.transform(image)
+            return image
+        elif isinstance(index, list):
+            images = [self.dataset[i][0] for i in index]
+            if self.transform:
+                images = [self.transform(img) for img in images]
+            return images
+        else:
+            raise TypeError("Index must be an integer or a list of integers")
+
