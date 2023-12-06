@@ -7,6 +7,7 @@ __pycache__/
 *.so
 lab*
 data/
+*.pt
 # Distribution / packaging
 .Python
 build/
