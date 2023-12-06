@@ -51,7 +51,7 @@ class VanillaCNN(nn.Module):
             nn.ReLU(),
             nn.BatchNorm2d(64)
         )
-        self.proj_head = Projection_Head(self.head_resnet_in_features)
+        self.proj_head = Projection_Head(3041536)
 
     def one_forward(self, input):
         output = self.deep_conv(input.unsqueeze(0))

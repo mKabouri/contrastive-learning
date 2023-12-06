@@ -12,7 +12,7 @@ def crop_and_resize(image):
 
 def color_distortion(image):
     return transforms.ColorJitter(brightness=(0.5, 2), contrast=(0.5, 1),\
-                                  saturation=(0.1, 2), hue=0.2)(image)
+                                  saturation=(0.1, 1.8), hue=0.2)(image)
 
 def gaussian_blur(image):
     return transforms.GaussianBlur(3)(image)
