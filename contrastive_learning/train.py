@@ -39,7 +39,6 @@ def contrastive_loss(rep_tensor, temperature):
     # print("SIMILARITIES: ", similarities)
     exp_similiraties = torch.exp(similarities)
     # print("EXP_SIM: ", exp_similiraties)
-    print("--------------------------------")
     
     denominator = torch.sum(exp_similiraties)
 
@@ -86,4 +85,4 @@ def train(model, train_data, temperature, optimizer, device=config.device, epoch
 
             total_loss += batch_loss.item()
 
-        print(f"Epoch: {epoch}, loss: {total_loss/config.NB_SAMPLES}")
+        print(f"Epoch: {epoch}, loss: {total_loss/3900}")

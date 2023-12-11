@@ -22,9 +22,9 @@ def color_distortion(image):
     ])
     return color_dist(image)
 
-def gaussian_blur(image):
-    return transforms.GaussianBlur(config.ORIGINAL_SIZE*0.1)(image)
+# def gaussian_blur(image):
+#     return transforms.GaussianBlur(config.ORIGINAL_SIZE*0.1)(image)
 
 
 def augment_image(image):
-    return gaussian_blur(color_distortion(crop_and_resize(image)))
+    return color_distortion(crop_and_resize(image))

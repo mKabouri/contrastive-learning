@@ -3,11 +3,18 @@ import torchvision.transforms as transforms
 
 import config
 
+def transform_loaded_data(means, stds):
+    return transforms.Compose([
+        transforms.Resize(config.ORIGINAL_SIZE),
+        transforms.ToTensor(),
+        transforms.Normalize(means, stds)
+    ])
+
 transform = transforms.Compose([
-    transforms.Resize(config.ORIGINAL_SIZE),
-    transforms.ToTensor(),
-    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
-])
+        transforms.Resize(config.ORIGINAL_SIZE),
+        transforms.ToTensor(),
+        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+    ])
 
 class UnlabeledDataset(torch.utils.data.Dataset):
     """
