@@ -8,6 +8,7 @@ __pycache__/
 lab*
 data/
 *.pt
+save/
 # Distribution / packaging
 .Python
 build/
