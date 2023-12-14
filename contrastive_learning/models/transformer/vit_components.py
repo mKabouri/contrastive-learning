@@ -2,26 +2,33 @@ import torch
 import torch.nn as nn
 
 from models.utils import image_to_patches
+import config as config
 
 class PositionalEncodingEmbeddings(nn.Module):
     def __init__(self,
-                 batch_size,
                  embedding_dim,
                  patch_size,
                  img_size):
         super(PositionalEncodingEmbeddings, self).__init__()
         self.patch_size = patch_size
         self.n_patches = (img_size**2)//(patch_size**2)
+        self.embedding_dim = embedding_dim
 
-        assert isinstance(self.n_patches, int)
+        self.cls_token_embed = nn.Parameter(torch.rand((1, 1, embedding_dim), requires_grad=True, device=config.device))
+        self.position_embed = nn.Parameter(torch.rand((1, self.n_patches+1, embedding_dim), requires_grad=True, device=config.device))
 
-        self.cls_token_embed = nn.Parameter(torch.rand((batch_size, 1, embedding_dim), requires_grad=True))
-        self.position_embed = nn.Parameter(torch.rand((1, self.n_patches+1, embedding_dim), requires_grad=True))
+        self.batch_size = None
 
-    def forward(self, input): # input shape: (B, C, H, W) or (C, H, W)
+    def forward(self, input):  # input shape: (B, C, H, W) or (C, H, W)
+        if self.batch_size is None:
+            self.batch_size = input.size(0) if input.ndim == 4 else 1
+
+            self.cls_token_embed = nn.Parameter(torch.rand((self.batch_size, 1, self.embedding_dim), requires_grad=True, device=config.device))
+
         patches = image_to_patches(input, self.patch_size)
 
-        B, N, C = patches.shape
+        B, N, C = patches.size()
+
         patches = patches + self.position_embed[:, :N]
 
         cls_tokens = self.cls_token_embed.expand(B, -1, -1)

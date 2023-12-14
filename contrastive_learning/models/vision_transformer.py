@@ -8,7 +8,6 @@ from .utils import ProjectionHead
 class VisionTransformer(nn.Module):
     def __init__(self,
                  embedding_dim,
-                 batch_size,
                  image_size,
                  attention_dim,
                  nb_heads,
@@ -16,12 +15,12 @@ class VisionTransformer(nn.Module):
                  patch_size,
                  dropout=0.0):
         super(VisionTransformer, self).__init__()
-        self.pos_embed = PositionalEncodingEmbeddings(batch_size, embedding_dim, patch_size, image_size)
+        self.pos_embed = PositionalEncodingEmbeddings(embedding_dim, patch_size, image_size)
 
         self.attention_layers = nn.ModuleList([
             AttentionBlock(embedding_dim, attention_dim, nb_heads, dropout) for _ in range(nb_layers)
         ])
-        
+
         self.proj_head = ProjectionHead(embedding_dim)
 
     def one_forward(self, input):

@@ -10,10 +10,10 @@ def transform_loaded_data(means, stds):
         transforms.Normalize(means, stds)
     ])
 
-transform = transforms.Compose([
+transform_cifar10 = transforms.Compose([
         transforms.Resize(config.ORIGINAL_SIZE),
         transforms.ToTensor(),
-        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+        transforms.Normalize((0.5, 0.5, 0.5), (0.2, 0.2, 0.2))
     ])
 
 class UnlabeledDataset(torch.utils.data.Dataset):
