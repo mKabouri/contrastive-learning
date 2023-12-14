@@ -4,17 +4,25 @@ import torch
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 ORIGINAL_SIZE=224
-BATCH_SIZE=260
+BATCH_SIZE=10
 LEARNING_RATE=0.3*BATCH_SIZE/256
 EPOCHS=100
-REP_OUTPUT=100
-
-
+REP_OUTPUT=512 # Output of the projection head
 
 ###############################
-###### CIFAR10 configs ######
+##### Transformer configs #####
 ###############################
-NB_SAMPLES=2000
+embedding_dim = 768
+attention_dim = 12
+nb_heads = 6
+nb_layers = 6
+patch_size = 16
+dropout = 0.2
+
+###############################
+####### CIFAR10 configs #######
+###############################
+NB_SAMPLES=20
 
 # List all dataset that we will work on
 cifar10_folder_path = os.path.join(os.path.curdir, "data/cifar10")

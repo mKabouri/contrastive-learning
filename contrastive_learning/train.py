@@ -6,6 +6,7 @@ import config
 import data_augmentations as augmentations
 import time
 import numpy as np
+
 # def sim(u, v):
 #     u = u.view(-1)
 #     v = v.view(-1)
@@ -15,9 +16,6 @@ import numpy as np
 #     return similarity
 
 def sim(u, v):
-    # u = u.view(-1)
-    # v = v.view(-1)
-
     res = F.cosine_similarity(u, v, dim=0)
     if np.isnan(res.clone().detach().cpu().numpy()):
         print("IS NAN")
@@ -65,13 +63,15 @@ def train(model, train_data, temperature, optimizer, device=config.device, epoch
             batch_augm1 = augmentation1(batch)
             batch_augm2 = augmentation2(batch)
             # end_aug = time.time() - start_aug
-            # print("Finish augment", end_aug)
+            # print("Finish augment")
 
             # print("Start_inference")
             # start_inf = time.time()
+            # print(batch_augm1.size())
             output1, output2 = model(batch_augm1, batch_augm2)
+            # print(output1.size())
             # end_inf = time.time() - start_inf
-            # print("Finish inf", end_inf)
+            # print("Finish inf")
 
             rep_tensor = torch.stack((output1, output2)).view(-1, config.REP_OUTPUT)
 

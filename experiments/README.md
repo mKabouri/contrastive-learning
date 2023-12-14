@@ -3,3 +3,4 @@
 - Compare with other architectures (ViT)
 - Use other techniques to extract representation and compare with simclr
 - Use plus 2 augmentations
+- Try different augmentation values
