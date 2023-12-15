@@ -55,11 +55,11 @@ simclr_model = VisionTransformer(config.embedding_dim,
 
 # We will use Adam optimizer for now
 optimizer = optim.Adam(params=simclr_model.parameters(), lr=config.LEARNING_RATE)
-print(len(training_data))
+# print(len(training_data))
 temperature = 0.5
 
 if __name__ == "__main__":
     print("Start")
-    train.train(simclr_model, training_dataloader, temperature, optimizer)
+    train.train(simclr_model, training_dataloader, temperature, optimizer,save_weights=True)
 
     torch.save(simclr_model.state_dict(), config.weights_path + "/Transformer_weights_final.pt")

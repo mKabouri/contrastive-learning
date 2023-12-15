@@ -27,7 +27,7 @@ class VisionTransformer(nn.Module):
         embedded_input = self.pos_embed(input)
         for attention_layer in self.attention_layers:
             embedded_input = attention_layer(embedded_input)
-        representation = embedded_input[:, 0]
+        representation = embedded_input[:, -1]
         if not self.training:
             return representation
         output = self.proj_head(representation)

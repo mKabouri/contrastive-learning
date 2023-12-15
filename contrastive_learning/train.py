@@ -29,21 +29,21 @@ def contrastive_loss(z1, z2, z_list, temperature):
     if similarities.numel() == 0:
         return torch.tensor(0.0, device=z1.device, requires_grad=True)
 
-    # # Numerator is exp(similarity_pair)
-    # exp_similarity = torch.exp(similarity_pair)
+    # Numerator is exp(similarity_pair)
+    exp_similarity = torch.exp(similarity_pair)
 
     # Denominator is sum(exp(list_similarity_pair))
     exp_similarities = torch.sum(torch.exp(similarities))
 
     # Apply log-sum-exp trick
-    loss = -similarity_pair + torch.log(exp_similarities)
-        
+    loss = -torch.log(exp_similarity) + torch.log(exp_similarities + exp_similarity)
+
     if torch.isnan(loss):
         return torch.tensor(0.0, device=z1.device, requires_grad=True)
         
     return loss
 
-def train(model, train_data, temperature, optimizer, device=config.device, epochs=config.EPOCHS):
+def train(model, train_data, temperature, optimizer, device=config.device, epochs=config.EPOCHS, save_weights=True):
     # We have to specify it because we need it in our model (see model.py)
     loss_hist = []
     model.train()
@@ -51,11 +51,12 @@ def train(model, train_data, temperature, optimizer, device=config.device, epoch
     print(f"Training start with {config.device}")
     print(f"Device name: {torch.cuda.get_device_name()}")
     print(f"Batch size: {config.BATCH_SIZE}")
+    print(f"Dataset size: {len(train_data)*config.BATCH_SIZE}")
     start_time = time.time()
-    for epoch in tqdm(range(epochs)):
+    for epoch in range(epochs):
         total_loss = 0
 
-        for i, data in enumerate(train_data):
+        for i, data in tqdm(enumerate(train_data)):
             images = data.to(device)
 
             # Zero the gradients
@@ -95,7 +96,7 @@ def train(model, train_data, temperature, optimizer, device=config.device, epoch
         average_loss = total_loss/(2*len(images)*len(train_data))
         loss_hist.append(average_loss)
         print(f'Epoch {epoch + 1}/{epochs}, Loss: {average_loss}')
-        if epoch%10 == 0:
+        if epoch%5 == 0 and save_weights:
             torch.save(model.state_dict(), config.weights_path + f"/Transformer_weights_{epoch}.pt")
 
     elapsed_time_seconds = time.time() - start_time
