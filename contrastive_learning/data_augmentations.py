@@ -8,8 +8,8 @@ import config
 
 def crop_and_resize(image):
     return transforms.Compose([
-        # transforms.RandomResizedCrop(config.ORIGINAL_SIZE, scale=(0.08, 1.0),\
-        #                              ratio=(0.75, 1.25), antialias=True),
+        transforms.RandomResizedCrop(config.ORIGINAL_SIZE, scale=(0.08, 1.0),\
+                                     ratio=(0.75, 1.25), antialias=True),
         transforms.RandomHorizontalFlip()
         ])(image)
 
@@ -23,8 +23,8 @@ def color_distortion(image):
     ])
     return color_dist(image)
 
-# def gaussian_blur(image):
-#     return transforms.GaussianBlur(config.ORIGINAL_SIZE*0.1)(image)
+def gaussian_blur(image):
+    return transforms.GaussianBlur(config.ORIGINAL_SIZE*0.1)(image)
 
 def augment_image(image):
     return color_distortion(crop_and_resize(image))
