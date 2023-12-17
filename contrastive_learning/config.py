@@ -13,7 +13,7 @@ REP_OUTPUT=512 # Output of the projection head
 ##### Transformer configs #####
 ###############################
 embedding_dim = 768
-attention_dim = 12
+attention_dim = embedding_dim
 patch_size = 16
 nb_heads = 6
 nb_layers = 6
