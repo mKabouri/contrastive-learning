@@ -68,8 +68,8 @@ def train(model, train_data, temperature, optimizer, device=config.device, epoch
             # Create tuples of transformed images for each image of the batch and put all the zk, zk+1 in a list (feed forward network)
             zk_list = []
             for image in images:
-                transformation1 = augmentations.get_transformed_augmented(np.random.rand())
-                transformation2 = augmentations.get_transformed_augmented(np.random.rand())
+                transformation1 = augmentations.get_transformed_augmented()
+                transformation2 = augmentations.get_transformed_augmented()
                 transformed_image1 = transformation1(image).to(device)
                 transformed_image2 = transformation2(image).to(device)
 

@@ -25,9 +25,10 @@ class VisionTransformer(nn.Module):
 
     def one_forward(self, input):
         embedded_input = self.pos_embed(input)
+        embedded_input = embedded_input.transpose(0, 1)
         for attention_layer in self.attention_layers:
             embedded_input = attention_layer(embedded_input)
-        representation = embedded_input[:, -1]
+        representation = embedded_input[0]
         if not self.training:
             return representation
         output = self.proj_head(representation)

@@ -12,13 +12,16 @@ from models.vision_transformer import VisionTransformer
 import load_imagenet as imagenet
 import data_augmentations as augmentations
 
+def count_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
 ####################################################
 ##################### DATASETS #####################
 ####################################################
 
 # CIFAR 10 Dataset
 # cifar10 = torchvision.datasets.CIFAR10(root=config.cifar10_folder_path, train=True,\
-#                                            download=False, transform=None)
+                                        #    download=False, transform=None)
 # dataset_cifar = data.UnlabeledDataset("CIFAR10", cifar10, data.transform_cifar10)
 # trainloader_cifar10 = torch.utils.data.DataLoader(dataset_cifar,\
 #                                                   batch_size=config.BATCH_SIZE,\
@@ -60,6 +63,11 @@ temperature = 0.5
 
 if __name__ == "__main__":
     print("Start")
+    print("NB_PARAMETERS: ", count_parameters(simclr_model))
     train.train(simclr_model, training_dataloader, temperature, optimizer,save_weights=True)
 
     torch.save(simclr_model.state_dict(), config.weights_path + "/Transformer_weights_final.pt")
+
+# 6, 6 -> 22 744 064
+# 8, 8 -> 29 837 312
+# 12, 12 -> 44 023 808

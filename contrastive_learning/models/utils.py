@@ -44,7 +44,7 @@ def image_to_patches(x, patch_size, flatten_channels=True):
 
 
 if __name__ == '__main__':
-    image = Image.open("./test_image.JPEG")
+    image = Image.open("./contrastive_learning/models/test_image.JPEG")
     tensor_image = torchvision.transforms.functional.pil_to_tensor(image)
     tensor_image = torchvision.transforms.Resize((228, 228))(tensor_image)
     PATCH_SIZE=76

@@ -29,9 +29,9 @@ def color_distortion(image):
 def augment_image(image):
     return color_distortion(crop_and_resize(image))
 
-
-def get_transformed_augmented(val):
-    if val < 0.5:
+import numpy as np
+def get_transformed_augmented():
+    if np.random.rand() < 0.5:
         return transforms.Compose([
             transforms.RandomResizedCrop(size=224 ,scale=(0.7, 1.0), ratio=(0.8, 1.2)),
             transforms.RandomHorizontalFlip(0.3),
