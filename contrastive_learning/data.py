@@ -16,7 +16,7 @@ transform_cifar10 = transforms.Compose([
         transforms.Normalize((0.5, 0.5, 0.5), (0.2, 0.2, 0.2))
     ])
 
-class UnlabeledDataset(torch.utils.data.Dataset):
+class GetDataset(torch.utils.data.Dataset):
     """
     Todo more generic class
     """
@@ -33,15 +33,15 @@ class UnlabeledDataset(torch.utils.data.Dataset):
 
     def __getitem__(self, index):
         if isinstance(index, int): # This is our previous dataset
-            image = self.dataset[index][0]
+            image, label = self.dataset[index]
             if self.transform:
                 image = self.transform(image)
-            return image
+            return image, label
         elif isinstance(index, list):
-            images = [self.dataset[i][0] for i in index]
+            items = [(self.dataset[i][0], self.dataset[i][1]) for i in index]
             if self.transform:
-                images = [self.transform(img) for img in images]
-            return images
+                items = [(self.transform(img), label) for img, label in items]
+            return items
         else:
             raise TypeError("Index must be an integer or a list of integers")
 

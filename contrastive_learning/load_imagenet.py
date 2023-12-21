@@ -27,14 +27,14 @@ class SubsetImageNet(torch.utils.data.Dataset):
         for cls in self.classes:
             class_path = os.path.join(root_folder, cls)
             img_files = os.listdir(class_path)
-            self.img_paths.extend([os.path.join(class_path, img) for img in img_files])
+            self.img_paths.extend([(os.path.join(class_path, img), self.class_to_idx[cls]) for img in img_files])
 
     def __len__(self):
         return len(self.img_paths)
 
     def __getitem__(self, idx):
-        img_path = self.img_paths[idx]
+        img_path, label = self.img_paths[idx]
         image = Image.open(img_path).convert("RGB")
         if self.transform:
             image = self.transform(image)
-        return image
+        return image, label

@@ -57,7 +57,7 @@ def train(model, train_data, temperature, optimizer, device=config.device, epoch
         total_loss = 0
 
         for i, data in tqdm(enumerate(train_data)):
-            images = data.to(device)
+            images, _ = data.to(device)
 
             # Zero the gradients
             optimizer.zero_grad()
@@ -68,8 +68,8 @@ def train(model, train_data, temperature, optimizer, device=config.device, epoch
             # Create tuples of transformed images for each image of the batch and put all the zk, zk+1 in a list (feed forward network)
             zk_list = []
             for image in images:
-                transformation1 = augmentations.get_transformed_augmented(np.random.rand())
-                transformation2 = augmentations.get_transformed_augmented(np.random.rand())
+                transformation1 = augmentations.get_transformed_augmented()
+                transformation2 = augmentations.get_transformed_augmented()
                 transformed_image1 = transformation1(image).to(device)
                 transformed_image2 = transformation2(image).to(device)
 
@@ -103,3 +103,68 @@ def train(model, train_data, temperature, optimizer, device=config.device, epoch
     elapsed_time_formatted = time.strftime("%H:%M:%S", time.gmtime(elapsed_time_seconds))
     print(f'Training finished: In {elapsed_time_formatted}')
     np.save(config.weights_path + "/loss_hist.npy", np.array(loss_hist))
+
+
+loss_fn = nn.CrossEntropyLoss()
+
+def train_classifier(classifier, train_data, optimizer, device=config.device, epochs=config.EPOCHS, save_weights=True):
+    for epoch in range(epochs):
+        total_loss = 0
+        correct_predictions = 0
+        total_samples = 0
+        
+        for i, batch in enumerate(train_data):
+            images, labels = batch
+            images = images.to(device)
+            labels = labels.to(device)
+            
+            outputs = classifier(images)
+
+            optimizer.zero_grad()
+
+            batch_loss = loss_fn(outputs, labels)
+
+            batch_loss.backward()
+
+            optimizer.step()
+        
+            total_loss += batch_loss.item()
+
+            # Calculate accuracy
+            _, predicted = torch.max(outputs, 1)
+            correct_predictions += (predicted == labels).sum().item()
+            total_samples += labels.size(0)
+
+        avg_loss = total_loss/len(train_data)*config.BATCH_SIZE
+        accuracy = correct_predictions/total_samples
+
+        print(f"Epoch: {epoch}, loss: {avg_loss}, accuracy: {accuracy}")
+        if save_weights:
+            torch.save(classifier.state_dict(), config.weights_path + f"/Transformer_classifier.pt")
+
+def evaluate_model(model, test_loader, criterion, device):
+    model.eval()
+    print(f"==> Evaluation")
+    total_loss = 0
+    correct = 0
+    total_samples = 0
+    with torch.no_grad():
+        for data, target in test_loader:
+            # Move data to device
+            data, target = data.to(device), target.to(device)
+
+            # Forward pass
+            output = model(data)
+
+            # Compute loss
+            total_loss += criterion(output, target).item()
+
+            # Calculate accuracy
+            _, predicted = torch.max(output.data, 1)
+            correct += (predicted == target).sum().item()
+            total_samples += target.size(0)
+
+    avg_loss = total_loss/len(test_loader)
+    accuracy = 100. * correct/total_samples
+    print(f"Evaluation results:\naccuracy: {accuracy}, loss: {avg_loss}")
+    return avg_loss, accuracy

@@ -1,8 +1,7 @@
 import torch
 import torchvision
 import torchvision.transforms as transforms
-import random
-
+import numpy as np
 
 import config
 
@@ -29,9 +28,8 @@ def gaussian_blur(image):
 def augment_image(image):
     return color_distortion(crop_and_resize(image))
 
-
-def get_transformed_augmented(val):
-    if val < 0.5:
+def get_transformed_augmented():
+    if np.random.rand() < 0.5:
         return transforms.Compose([
             transforms.RandomResizedCrop(size=224 ,scale=(0.7, 1.0), ratio=(0.8, 1.2)),
             transforms.RandomHorizontalFlip(0.3),

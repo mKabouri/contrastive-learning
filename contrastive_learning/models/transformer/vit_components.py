@@ -14,7 +14,9 @@ class PositionalEncodingEmbeddings(nn.Module):
         self.n_patches = (img_size**2)//(patch_size**2)
         self.embedding_dim = embedding_dim
 
+        # (1, 1, embed_dim)        
         self.cls_token_embed = nn.Parameter(torch.rand((1, 1, embedding_dim), requires_grad=True, device=config.device))
+        # (1, N+1, embed_dim)
         self.position_embed = nn.Parameter(torch.rand((1, self.n_patches+1, embedding_dim), requires_grad=True, device=config.device))
 
         self.batch_size = None
@@ -25,15 +27,15 @@ class PositionalEncodingEmbeddings(nn.Module):
 
             self.cls_token_embed = nn.Parameter(torch.rand((self.batch_size, 1, self.embedding_dim), requires_grad=True, device=config.device))
 
-        patches = image_to_patches(input, self.patch_size)
+        patches = image_to_patches(input, self.patch_size) # (B, N, C*  PATCH_SIZE*PATCH_SIZE)
 
         B, N, C = patches.size()
 
-        patches = patches + self.position_embed[:, :N]
+        cls_tokens = self.cls_token_embed.expand(B, -1, -1) # (B, 1, EMBED_DIM)
 
-        cls_tokens = self.cls_token_embed.expand(B, -1, -1)
-        patches = torch.cat([cls_tokens, patches], dim=1)
+        patches = torch.cat([cls_tokens, patches], dim=1) # (B, N+1, EMBED_DIM)
 
+        patches = patches + self.position_embed # (B, N+1, EMBED_DIM)
         return patches
 
 class AttentionBlock(nn.Module):
