@@ -53,11 +53,12 @@ def train(model, train_data, temperature, optimizer, device=config.device, epoch
     print(f"Batch size: {config.BATCH_SIZE}")
     print(f"Dataset size: {len(train_data)*config.BATCH_SIZE}")
     start_time = time.time()
-    for epoch in range(epochs):
+    for epoch in tqdm(range(epochs)):
         total_loss = 0
 
-        for i, data in tqdm(enumerate(train_data)):
-            images, _ = data.to(device)
+        for i, data in enumerate(train_data):
+            images, _ = data
+            images = images.to(device)
 
             # Zero the gradients
             optimizer.zero_grad()

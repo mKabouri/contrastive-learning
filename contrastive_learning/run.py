@@ -10,7 +10,7 @@ from models.siamese_resnet18 import SiameseNetwork
 from models.vanilla_cnn import VanillaCNN
 from models.vision_transformer import VisionTransformer
 from models.classifier import MLP
-import load_imagenet as imagenet
+
 import data_augmentations as augmentations
 
 import argparse
@@ -49,7 +49,7 @@ def main():
 
 
     elif args.dataset == 'imagenet':
-        training_data = imagenet.SubsetImageNet(config.imagenet_folder_path, imagenet.imagenet_transform)
+        training_data = data.SubsetImageNet(config.imagenet_folder_path, data.imagenet_transform)
         trainloader = torch.utils.data.DataLoader(training_data, batch_size=config.BATCH_SIZE, shuffle=True)
     else:
         raise ValueError("Invalid dataset choice. Choose between 'cifar10' and 'imagenet'.")
