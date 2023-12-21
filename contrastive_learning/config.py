@@ -21,7 +21,7 @@ dropout = 0.2
 ###############################
 ####### CIFAR10 configs #######
 ###############################
-NB_SAMPLES=40
+NB_SAMPLES=400
 
 # List all dataset that we will work on
 cifar10_folder_path = os.path.join(os.path.curdir, "data/cifar10")
