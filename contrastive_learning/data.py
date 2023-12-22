@@ -21,7 +21,12 @@ transform_cifar10 = transforms.Compose([
 
 class GetDataset(torch.utils.data.Dataset):
     """
-    Todo more generic class
+    Generic dataset class for handling various datasets with specified transformations.
+
+    Attributes:
+        name (str): Name of the dataset.
+        dataset (torch.utils.data.Dataset): Original dataset.
+        transform (torchvision.transforms.Compose): Transformation to be applied to the dataset.
     """
     def __init__(self, name, dataset, transform=None):
         self.name = name
@@ -55,6 +60,17 @@ imagenet_transform = transforms.Compose([
     ])
 
 class SubsetImageNet(torch.utils.data.Dataset):
+    """
+    Dataset class for a subset of ImageNet, with specified transformations.
+
+    Attributes:
+        root_folder (str): Root folder containing the subset of ImageNet.
+        transform (torchvision.transforms.Compose): Transformation to be applied to the dataset.
+        classes (list): List of class names in the subset.
+        class_to_idx (dict): Mapping from class names to indices.
+        idx_to_class (dict): Mapping from indices to class names.
+        img_paths (list): List of image paths and corresponding labels.
+    """
     def __init__(self, root_folder, transform=None):
         super(SubsetImageNet, self).__init__()
 
