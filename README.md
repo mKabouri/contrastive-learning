@@ -66,6 +66,11 @@ python contrastive_learning/run.py --dataset cifar10 --model siamese --classifie
 python contrastive_learning/run.py --dataset cifar10 --model transformer --classifier True
 ```
 
+- To train a vanilla CNN on the ImageNet dataset:
+```
+python contrastive_learning/run.py --dataset imagenet --model vanilla --classifier False
+```
+
 ## ./notebooks/
 
 This folder contains a collection of Jupyter notebooks that document our experiments with Contrastive Learning using a downscaled version of the SimCLR framework. Below is an overview of the notebooks and their contents.
