@@ -32,13 +32,10 @@ def main():
     args = parse_arguments()
 
     if args.dataset == 'cifar10':
+        # Training data
         cifar10 = torchvision.datasets.CIFAR10(root=config.cifar10_folder_path, train=True,
                                                download=False, transform=None)
         dataset = data.GetDataset("CIFAR10", cifar10, data.transform_cifar10)
-        trainloader_cifar10 = torch.utils.data.DataLoader(dataset,
-                                                  batch_size=config.BATCH_SIZE,
-                                                  shuffle=True, num_workers=2)
-
         random_per = torch.randperm(len(cifar10))
         idx = random_per[:config.NB_SAMPLES].tolist()
         subset_cifar = dataset[idx]
@@ -46,6 +43,17 @@ def main():
                                                   batch_size=config.BATCH_SIZE,
                                                   shuffle=True,
                                                   num_workers=2)
+        
+        # Validation data
+        cifar10_val = torchvision.datasets.CIFAR10(root=config.cifar10_folder_path, train=False,
+                                                  download=False, transform=None)
+        dataset_val = data.GetDataset("CIFAR10_Val", cifar10_val, data.transform_cifar10)
+        idx_val = torch.randperm(len(cifar10_val))[:1000].tolist()
+        subset_cifar_val = dataset_val[idx_val]
+        valloader = torch.utils.data.DataLoader(subset_cifar_val,
+                                                batch_size=config.BATCH_SIZE,
+                                                shuffle=True,
+                                                num_workers=2)
 
 
     elif args.dataset == 'imagenet':
@@ -70,11 +78,13 @@ def main():
         raise ValueError("Invalid model choice. Choose between 'siamese', 'vanilla', and 'transformer'.")
 
     if args.classifier == 'True':
+        print(f"Fine-tune classifier with {config.device}")
         model.load_state_dict(torch.load('./weights/Transformer_weights_final.pt'))
         classifier = MLP(model, config.embedding_dim, 512, 10).to(config.device)
         LEARNING_RATE_CLASSIFIER=1e-2
         optimizer = optim.Adam(params=classifier.parameters(), lr=LEARNING_RATE_CLASSIFIER)
         train.train_classifier(classifier, trainloader, optimizer, epochs=11)
+        train.evaluate_model(classifier, valloader)
         return
     elif args.classifier == 'False':
         pass
