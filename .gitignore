@@ -10,6 +10,7 @@ lab*
 data/
 *.pt
 save/
+weights/
 # Distribution / packaging
 .Python
 build/

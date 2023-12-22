@@ -53,11 +53,12 @@ def train(model, train_data, temperature, optimizer, device=config.device, epoch
     print(f"Batch size: {config.BATCH_SIZE}")
     print(f"Dataset size: {len(train_data)*config.BATCH_SIZE}")
     start_time = time.time()
-    for epoch in range(epochs):
+    for epoch in tqdm(range(epochs)):
         total_loss = 0
 
-        for i, data in tqdm(enumerate(train_data)):
-            images, _ = data.to(device)
+        for i, data in enumerate(train_data):
+            images, _ = data
+            images = images.to(device)
 
             # Zero the gradients
             optimizer.zero_grad()
@@ -108,6 +109,7 @@ def train(model, train_data, temperature, optimizer, device=config.device, epoch
 loss_fn = nn.CrossEntropyLoss()
 
 def train_classifier(classifier, train_data, optimizer, device=config.device, epochs=config.EPOCHS, save_weights=True):
+    print(f"Training data length: {len(train_data)*config.BATCH_SIZE}")
     for epoch in range(epochs):
         total_loss = 0
         correct_predictions = 0
@@ -142,10 +144,12 @@ def train_classifier(classifier, train_data, optimizer, device=config.device, ep
         if save_weights:
             torch.save(classifier.state_dict(), config.weights_path + f"/Transformer_classifier.pt")
 
-def evaluate_model(model, test_loader, criterion, device):
+criterion = nn.CrossEntropyLoss()
+
+def evaluate_model(model, test_loader, device=config.device):
     model.eval()
     print(f"==> Evaluation")
-    total_loss = 0
+    val_loss = 0
     correct = 0
     total_samples = 0
     with torch.no_grad():
@@ -157,14 +161,16 @@ def evaluate_model(model, test_loader, criterion, device):
             output = model(data)
 
             # Compute loss
-            total_loss += criterion(output, target).item()
+            val_loss += criterion(output, target).item()
 
             # Calculate accuracy
             _, predicted = torch.max(output.data, 1)
             correct += (predicted == target).sum().item()
             total_samples += target.size(0)
 
-    avg_loss = total_loss/len(test_loader)
-    accuracy = 100. * correct/total_samples
-    print(f"Evaluation results:\naccuracy: {accuracy}, loss: {avg_loss}")
+    avg_loss = val_loss/total_samples
+    accuracy = (100.*correct)/total_samples
+    print()
+    print(f"Evaluation results:\nval_accuracy: {accuracy}, val_loss: {avg_loss}")
+    print()
     return avg_loss, accuracy
