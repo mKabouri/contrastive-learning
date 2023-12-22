@@ -15,13 +15,13 @@ REP_OUTPUT=512 # Output of the projection head
 embedding_dim = 768
 attention_dim = embedding_dim
 patch_size = 16
-nb_heads = 6
-nb_layers = 6
+nb_heads = 8
+nb_layers = 8
 dropout = 0.2
 ###############################
 ####### CIFAR10 configs #######
 ###############################
-NB_SAMPLES=10000
+NB_SAMPLES=50000
 
 # List all dataset that we will work on
 cifar10_folder_path = os.path.join(os.path.curdir, "data/cifar10")

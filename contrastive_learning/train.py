@@ -17,10 +17,32 @@ from tqdm import tqdm
 #     return similarity
 
 def sim(u, v):
+    """
+    Calculate the cosine similarity between two vectors.
+
+    Args:
+        u (torch.Tensor): First vector.
+        v (torch.Tensor): Second vector.
+
+    Returns:
+        torch.Tensor: Cosine similarity between u and v.
+    """
     res = F.cosine_similarity(u, v, dim=-1)
     return res
 
 def contrastive_loss(z1, z2, z_list, temperature):
+    """
+    Calculate the contrastive loss between two vectors z1 and z2.
+
+    Args:
+        z1 (torch.Tensor): First vector.
+        z2 (torch.Tensor): Second vector.
+        z_list (list): List of vectors for contrastive comparison.
+        temperature (float): Temperature parameter for scaling the similarity.
+
+    Returns:
+        torch.Tensor: Contrastive loss.
+    """
     similarity_pair = sim(z1, z2)/temperature
 
     # Calculate the cosine similarity for each pair of z1 and... but not z1 and z1
@@ -44,8 +66,20 @@ def contrastive_loss(z1, z2, z_list, temperature):
     return loss
 
 def train(model, train_data, temperature, optimizer, device=config.device, epochs=config.EPOCHS, save_weights=True):
-    # We have to specify it because we need it in our model (see model.py)
+    """
+    Train the contrastive learning model.
+
+    Args:
+        model (torch.nn.Module): Contrastive learning model.
+        train_data (torch.utils.data.DataLoader): Training data loader.
+        temperature (float): Temperature parameter for contrastive loss.
+        optimizer (torch.optim.Optimizer): Model optimizer.
+        device (str): Device to use for training (default is config.device).
+        epochs (int): Number of training epochs (default is config.EPOCHS).
+        save_weights (bool): Whether to save model weights during training (default is True).
+    """
     loss_hist = []
+    # We have to specify it because we need it in our model
     model.train()
     model.to(device)
     print(f"Training start with {config.device}")
@@ -109,12 +143,24 @@ def train(model, train_data, temperature, optimizer, device=config.device, epoch
 loss_fn = nn.CrossEntropyLoss()
 
 def train_classifier(classifier, train_data, optimizer, device=config.device, epochs=config.EPOCHS, save_weights=True):
-    print(f"Training data length: {len(train_data)*config.BATCH_SIZE}")
+    """
+    Train a classifier.
+
+    Args:
+        classifier (torch.nn.Module): Classifier model.
+        train_data (torch.utils.data.DataLoader): Training data loader.
+        optimizer (torch.optim.Optimizer): Model optimizer.
+        device (str): Device to use for training (default is config.device).
+        epochs (int): Number of training epochs (default is config.EPOCHS).
+        save_weights (bool): Whether to save model weights during training (default is True).
+    """
+    print(f"Dataset size: {len(train_data)*config.BATCH_SIZE}")
+    start_fine_tune = time.time()
     for epoch in range(epochs):
         total_loss = 0
         correct_predictions = 0
         total_samples = 0
-        
+        start_epoch_time = time.time()
         for i, batch in enumerate(train_data):
             images, labels = batch
             images = images.to(device)
@@ -136,17 +182,30 @@ def train_classifier(classifier, train_data, optimizer, device=config.device, ep
             _, predicted = torch.max(outputs, 1)
             correct_predictions += (predicted == labels).sum().item()
             total_samples += labels.size(0)
-
-        avg_loss = total_loss/len(train_data)*config.BATCH_SIZE
+        avg_loss = total_loss/total_samples
         accuracy = correct_predictions/total_samples
-
-        print(f"Epoch: {epoch}, loss: {avg_loss}, accuracy: {accuracy}")
+        epoch_time_end = time.time() - start_epoch_time
+        print(f"Epoch: {epoch}, loss: {avg_loss:.3}, accuracy: {accuracy}, epoch time: {epoch_time_end:.3}")
         if save_weights:
             torch.save(classifier.state_dict(), config.weights_path + f"/Transformer_classifier.pt")
+    end_fine_tune = time.time() - start_fine_tune
+    print(f"Training finished, duration: {end_fine_tune:.3}")
 
 criterion = nn.CrossEntropyLoss()
 
 def evaluate_model(model, test_loader, device=config.device):
+    """
+    Evaluate the performance of a model on a test set.
+
+    Args:
+        model (torch.nn.Module): Model to be evaluated.
+        test_loader (torch.utils.data.DataLoader): Test data loader.
+        device (str): Device to use for evaluation (default is config.device).
+
+    Returns:
+        float: Average loss on the test set.
+        float: Accuracy on the test set.
+    """
     model.eval()
     print(f"==> Evaluation")
     val_loss = 0
@@ -171,6 +230,6 @@ def evaluate_model(model, test_loader, device=config.device):
     avg_loss = val_loss/total_samples
     accuracy = (100.*correct)/total_samples
     print()
-    print(f"Evaluation results:\nval_accuracy: {accuracy}, val_loss: {avg_loss}")
+    print(f"Evaluation results:\nval_accuracy: {accuracy}, val_loss: {avg_loss:.3}")
     print()
     return avg_loss, accuracy
