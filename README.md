@@ -35,7 +35,7 @@ This project utilizes two datasets:
 
 **Note:** All commands should be run from the project root directory.
 
-The following are command-line arguments:
+The following are command-line arguments (see ./contrastive_learning/run.py):
 1. --dataset
 
 - Choices: ['cifar10', 'imagenet']
