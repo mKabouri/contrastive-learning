@@ -71,6 +71,10 @@ python contrastive_learning/run.py --dataset cifar10 --model transformer --class
 python contrastive_learning/run.py --dataset imagenet --model vanilla --classifier False
 ```
 
+### Weights:
+
+You can access the weights [here](https://drive.google.com/drive/folders/1j1cKbQuuEvjA8gJJgmhX_B02sR-zkCp_?usp=sharing).
+
 ## ./notebooks/
 
 This folder contains a collection of Jupyter notebooks that document our experiments with Contrastive Learning using a downscaled version of the SimCLR framework. Below is an overview of the notebooks and their contents.
