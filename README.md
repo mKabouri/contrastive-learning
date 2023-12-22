@@ -15,7 +15,7 @@ This project utilizes two datasets:
 - Download from [here](https://www.kaggle.com/c/imagenet-object-localization-challenge/data).
 - Organize the dataset by creating folders for each class within the ./data/imagenet/ directory. The structure should be similar to ./data/imagenet/classes_folders.
 
-`./data` folder Structure:
+`./data` folder structure:
 
 ```
 ./
