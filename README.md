@@ -33,3 +33,41 @@ This project utilizes two datasets:
 
 ### ./constrastive-learning
 
+**Note:** All commands should be run from the project root directory.
+
+The following are command-line arguments:
+1. --dataset
+
+- Choices: ['cifar10', 'imagenet']
+- Default: 'cifar10'
+- Description: Choose the dataset for training. Options include 'cifar10' or 'imagenet'.
+
+2. --model
+
+- Choices: ['siamese', 'vanilla', 'transformer']
+- Default: 'transformer'
+- Description: Choose the model architecture for training. Options include 'siamese', 'vanilla', or 'transformer'.
+
+3. --classifier
+
+- Choices: ['True', 'False']
+- Default: 'False'
+- Description: Set to 'True' if you want to fine-tune a classifier on a pretrained model; 'False' otherwise.
+
+##### Example of usage:
+
+- To train a siamese model on the CIFAR-10 dataset:
+```
+python contrastive_learning/run.py --dataset cifar10 --model siamese --classifier False
+```
+
+- To fine-tune a classifier on a pretrained transformer model with contrastive_learning:
+```
+python contrastive_learning/run.py --dataset cifar10 --model transformer --classifier True
+```
+
+- To train a vanilla CNN on the ImageNet dataset:
+```
+python contrastive_learning/run.py --dataset imagenet --model vanilla --classifier False
+```
+
